@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>濛濛的专属菜单 💕</title>
+<style>
+  :root {
+    --bg: #fff5f7;
+    --card: #ffffff;
+    --primary: #e8536c;
+    --primary-light: #fce4e8;
+    --text: #3d2c2e;
+    --text-light: #8c7377;
+    --border: #f0d6db;
+    --shadow: 0 2px 16px rgba(232,83,108,0.08);
+    --radius: 16px;
+    --accent: #f7b731;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ── Header ── */
+  .header {
+    background: linear-gradient(135deg, #e8536c 0%, #f07b8e 50%, #f5a0ad 100%);
+    color: #fff;
+    padding: 28px 20px 24px;
+    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 4px 24px rgba(232,83,108,0.2);
+  }
+  .header h1 {
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: 2px;
+  }
+  .header .sub {
+    font-size: 13px;
+    opacity: 0.9;
+    margin-top: 4px;
+    letter-spacing: 1px;
+  }
+  .header .hearts {
+    font-size: 18px;
+    animation: pulse 1.5s ease-in-out infinite;
+    display: inline-block;
+  }
+  @keyframes pulse {
+    0%,100% { transform:scale(1); }
+    50% { transform:scale(1.15); }
+  }
+
+  /* ── Tabs ── */
+  .tabs {
+    display: flex;
+    gap: 0;
+    background: #fff;
+    position: sticky;
+    top: 120px;
+    z-index: 99;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    border-bottom: 1px solid var(--border);
+  }
+  .tab {
+    flex: 1;
+    padding: 14px 8px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--text-light);
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s;
+    background: none;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+  }
+  .tab.active {
+    color: var(--primary);
+    border-bottom-color: var(--primary);
+  }
+  .tab .badge {
+    background: var(--primary);
+    color: #fff;
+    font-size: 11px;
+    padding: 2px 7px;
+    border-radius: 10px;
+    margin-left: 4px;
+    font-weight: 500;
+  }
+
+  /* ── Main ── */
+  .main {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 16px;
+  }
+
+  /* ── Category ── */
+  .category {
+    margin-bottom: 24px;
+  }
+  .cat-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 10px;
+    padding-left: 8px;
+    border-left: 4px solid var(--primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .cat-title .icon { font-size:20px; }
+
+  /* ── Menu Item ── */
+  .menu-item {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 10px;
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    transition: transform 0.15s, box-shadow 0.15s;
+    cursor: pointer;
+    position: relative;
+    border: 1px solid transparent;
+  }
+  .menu-item:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 20px rgba(232,83,108,0.12);
+  }
+  .menu-item:active {
+    transform: scale(0.985);
+  }
+  .menu-item .emoji {
+    font-size: 36px;
+    flex-shrink: 0;
+    width: 48px;
+    text-align: center;
+  }
+  .menu-item .info {
+    flex: 1;
+    min-width: 0;
+  }
+  .menu-item .name {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .menu-item .desc {
+    font-size: 12px;
+    color: var(--text-light);
+    margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .menu-item .price {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--primary);
+    flex-shrink: 0;
+  }
+  .menu-item .price::before { content:'¥'; font-size:12px; }
+
+  /* ── Quantity controls ── */
+  .qty-ctrl {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .qty-btn {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    border: 2px solid var(--primary);
+    background: #fff;
+    color: var(--primary);
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+    line-height: 1;
+  }
+  .qty-btn:hover { background:var(--primary); color:#fff; }
+  .qty-btn:active { transform:scale(0.9); }
+  .qty-num {
+    font-size: 16px;
+    font-weight: 700;
+    min-width: 20px;
+    text-align: center;
+    color: var(--text);
+  }
+
+  /* ── Cart Panel ── */
+  .cart-panel {
+    display: none;
+  }
+  .cart-panel.show {
+    display: block;
+  }
+  .cart-empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-light);
+  }
+  .cart-empty .big-emoji { font-size:64px; margin-bottom:12px; }
+  .cart-item {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    margin-bottom: 8px;
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .cart-item .name { flex:1; font-weight:600; font-size:14px; }
+  .cart-item .subtotal { font-weight:700; color:var(--primary); font-size:15px; }
+  .cart-item .subtotal::before { content:'¥'; font-size:12px; }
+  .cart-item .remove-btn {
+    background: none; border: none; color: #ccc; font-size: 18px;
+    cursor: pointer; padding: 4px 8px; transition:color 0.15s;
+  }
+  .cart-item .remove-btn:hover { color: var(--primary); }
+
+  .cart-total {
+    background: linear-gradient(135deg, #e8536c, #f07b8e);
+    color: #fff;
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 12px;
+    font-size: 17px;
+    font-weight: 700;
+  }
+  .cart-total .amount { font-size: 22px; }
+  .cart-total .amount::before { content:'¥'; font-size:14px; }
+
+  /* ── Buttons ── */
+  .btn {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 50px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: all 0.2s;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, #e8536c, #f07b8e);
+    color: #fff;
+    box-shadow: 0 4px 16px rgba(232,83,108,0.3);
+    margin-top: 12px;
+  }
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(232,83,108,0.4); }
+  .btn-primary:active { transform: scale(0.98); }
+  .btn-outline {
+    background: #fff;
+    color: var(--primary);
+    border: 2px solid var(--primary);
+    margin-top: 8px;
+  }
+  .btn-outline:hover { background: var(--primary-light); }
+
+  /* ── Edit Panel ── */
+  .edit-panel { display:none; }
+  .edit-panel.show { display:block; }
+
+  .edit-item {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 10px;
+    box-shadow: var(--shadow);
+  }
+  .edit-item .row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+    align-items: center;
+  }
+  .edit-item .row:last-child { margin-bottom:0; }
+  .edit-item input, .edit-item select {
+    flex: 1;
+    padding: 10px 12px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    font-size: 14px;
+    font-family: inherit;
+    background: #fefefe;
+  }
+  .edit-item input:focus, .edit-item select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(232,83,108,0.1);
+  }
+  .edit-item .del-btn {
+    background: #fff;
+    border: 1.5px solid #e74c3c;
+    color: #e74c3c;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+  .edit-item .del-btn:hover { background:#e74c3c; color:#fff; }
+
+  .edit-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+  }
+  .edit-actions .btn {
+    border-radius: 50px;
+    flex: 1;
+  }
+  .btn-add {
+    background: #fff;
+    color: var(--primary);
+    border: 2px dashed var(--primary);
+    padding: 12px;
+    border-radius: var(--radius);
+    width: 100%;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: all 0.2s;
+  }
+  .btn-add:hover { background: var(--primary-light); }
+
+  /* ── Toast ── */
+  .toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: #3d2c2e;
+    color: #fff;
+    padding: 12px 28px;
+    border-radius: 50px;
+    font-size: 14px;
+    font-weight: 600;
+    z-index: 999;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    pointer-events: none;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* ── Order Modal ── */
+  .modal-overlay {
+    position: fixed; inset:0; background: rgba(0,0,0,0.5);
+    z-index: 200; display:flex; align-items:flex-end; justify-content:center;
+    animation: fadeIn 0.2s;
+  }
+  @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+  .modal {
+    background: #fff;
+    border-radius: 20px 20px 0 0;
+    width: 100%;
+    max-width: 600px;
+    max-height: 85vh;
+    overflow-y: auto;
+    padding: 24px 20px 32px;
+    animation: slideUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  @keyframes slideUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
+  .modal h2 { font-size:20px; text-align:center; margin-bottom:20px; color:var(--primary); }
+  .modal .order-summary {
+    background: var(--bg);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  .modal .order-summary .line {
+    display: flex; justify-content: space-between;
+    padding: 4px 0; font-size: 14px;
+  }
+  .modal .order-summary .line.total {
+    font-weight: 700; font-size: 16px; border-top: 1px dashed var(--border);
+    margin-top: 8px; padding-top: 10px; color: var(--primary);
+  }
+  .modal .love-note {
+    text-align: center;
+    font-size: 14px;
+    color: var(--primary);
+    margin: 12px 0;
+    font-weight: 600;
+  }
+
+  .note-input {
+    width: 100%;
+    padding: 12px;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    font-size: 14px;
+    font-family: inherit;
+    resize: vertical;
+    min-height: 60px;
+    margin-bottom: 12px;
+  }
+  .note-input:focus {
+    outline: none;
+    border-color: var(--primary);
+  }
+
+  /* ── Floating cart button ── */
+  .fab {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #e8536c, #f07b8e);
+    color: #fff;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(232,83,108,0.4);
+    z-index: 50;
+    transition: transform 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .fab:hover { transform: scale(1.08); }
+  .fab:active { transform: scale(0.95); }
+  .fab .count {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    background: var(--accent);
+    color: #3d2c2e;
+    font-size: 11px;
+    font-weight: 700;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 400px) {
+    .menu-item { padding:12px; gap:10px; }
+    .menu-item .emoji { font-size:28px; width:38px; }
+    .menu-item .price { font-size:15px; }
+    .qty-btn { width:26px; height:26px; font-size:16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <div class="hearts">💕</div>
+  <h1>濛濛的专属菜单</h1>
+  <div class="sub">每一道菜，都是我对你的心意 💌</div>
+</div>
+
+<!-- Tabs -->
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('menu')">📋 菜单</button>
+  <button class="tab" onclick="switchTab('cart')">
+    🛒 已选 <span class="badge" id="cartBadge">0</span>
+  </button>
+  <button class="tab" onclick="switchTab('edit')">✏️ 编辑</button>
+</div>
+
+<!-- Main Content -->
+<div class="main">
+
+  <!-- Menu Panel -->
+  <div id="menuPanel"></div>
+
+  <!-- Cart Panel -->
+  <div id="cartPanel" class="cart-panel"></div>
+
+  <!-- Edit Panel -->
+  <div id="editPanel" class="edit-panel"></div>
+
+</div>
+
+<!-- Floating Cart Button -->
+<button class="fab" onclick="switchTab('cart'); window.scrollTo({top:0,behavior:'smooth'})">
+  🛒
+  <span class="count" id="fabCount">0</span>
+</button>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- Order Modal -->
+<div id="orderModal" class="modal-overlay" style="display:none" onclick="if(event.target===this)closeOrderModal()">
+  <div class="modal">
+    <h2>💝 确认下单</h2>
+    <div class="order-summary" id="orderSummary"></div>
+    <textarea class="note-input" id="orderNote" placeholder="给濛濛的留言…（选填）💌"></textarea>
+    <div class="love-note">这份心意，濛濛一定能感受到 💕</div>
+    <button class="btn btn-primary" onclick="submitOrder()">✨ 发送心意 ✨</button>
+    <button class="btn btn-outline" onclick="closeOrderModal()">再想想</button>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════
+//  DEFAULT MENU DATA
+// ═══════════════════════════════════════
+const DEFAULT_MENU = [
+  { cat:'💋 开胃心动', items:[
+    { emoji:'🥗', name:'初见沙拉', desc:'新鲜蔬菜配酸甜酱汁，像第一次见你时的心跳', price:28 },
+    { emoji:'🍜', name:'濛濛专属拌面', desc:'秘制酱料，只有你能吃到的味道', price:22 },
+    { emoji:'🦐', name:'心动手剥虾', desc:'剥好的虾仁，不用你动手', price:38 },
+  ]},
+  { cat:'🍝 主菜·满满的爱', items:[
+    { emoji:'🥩', name:'宠爱牛排', desc:'七分熟，像我对你的喜欢——刚刚好', price:68 },
+    { emoji:'🍣', name:'甜蜜三文鱼', desc:'新鲜刺身，片片都是温柔', price:58 },
+    { emoji:'🍕', name:'分享披萨', desc:'一人一半，你是我的另一半', price:48 },
+    { emoji:'🍛', name:'暖心咖喱饭', desc:'热腾腾的，像你给我的温暖', price:35 },
+  ]},
+  { cat:'🍰 甜品·你的甜', items:[
+    { emoji:'🍮', name:'焦糖布丁', desc:'表面微苦，内心超甜——像你', price:18 },
+    { emoji:'🍦', name:'告白冰淇淋', desc:'三种口味，代表"我爱你"', price:22 },
+    { emoji:'🍫', name:'浓情巧克力熔岩', desc:'轻轻一勺，心意流淌', price:32 },
+  ]},
+  { cat:'🥤 饮品·滋润心田', items:[
+    { emoji:'🧋', name:'濛濛奶茶', desc:'少糖去冰，你喜欢的口味', price:16 },
+    { emoji:'🍹', name:'粉红气泡饮', desc:'冒着幸福的泡泡', price:20 },
+    { emoji:'☕', name:'宠爱拿铁', desc:'拉花是你的名字', price:18 },
+  ]},
+];
+
+// ═══════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════
+let menu = JSON.parse(localStorage.getItem('mm_menu')) || JSON.parse(JSON.stringify(DEFAULT_MENU));
+let cart = JSON.parse(localStorage.getItem('mm_cart')) || {}; // { "itemKey": qty }
+
+function save() {
+  localStorage.setItem('mm_menu', JSON.stringify(menu));
+  localStorage.setItem('mm_cart', JSON.stringify(cart));
+}
+
+function itemKey(catIdx, itemIdx) {
+  return `${catIdx}_${itemIdx}`;
+}
+
+function getCartCount() {
+  return Object.values(cart).reduce((s,v) => s+v, 0);
+}
+
+function getCartTotal() {
+  let total = 0;
+  for (const [key, qty] of Object.entries(cart)) {
+    const [ci, ii] = key.split('_').map(Number);
+    if (menu[ci] && menu[ci].items[ii]) {
+      total += menu[ci].items[ii].price * qty;
+    }
+  }
+  return total;
+}
+
+// ═══════════════════════════════════════
+//  RENDER
+// ═══════════════════════════════════════
+function renderMenu() {
+  const el = document.getElementById('menuPanel');
+  let html = '';
+  menu.forEach((cat, ci) => {
+    html += `<div class="category"><div class="cat-title"><span class="icon">${cat.cat.slice(0,2)}</span>${cat.cat.slice(3)}</div>`;
+    cat.items.forEach((item, ii) => {
+      const key = itemKey(ci, ii);
+      const qty = cart[key] || 0;
+      html += `
+        <div class="menu-item" onclick="addToCart('${key}')">
+          <div class="emoji">${item.emoji}</div>
+          <div class="info">
+            <div class="name">${item.name}</div>
+            <div class="desc">${item.desc}</div>
+          </div>
+          <div class="price">${item.price}</div>
+          <div class="qty-ctrl" onclick="event.stopPropagation()">
+            <button class="qty-btn" onclick="changeQty('${key}', -1)">−</button>
+            <span class="qty-num">${qty}</span>
+            <button class="qty-btn" onclick="changeQty('${key}', 1)">+</button>
+          </div>
+        </div>`;
+    });
+    html += '</div>';
+  });
+  el.innerHTML = html;
+}
+
+function renderCart() {
+  const el = document.getElementById('cartPanel');
+  const entries = Object.entries(cart).filter(([,qty]) => qty > 0);
+
+  if (entries.length === 0) {
+    el.innerHTML = `
+      <div class="cart-empty">
+        <div class="big-emoji">🛒</div>
+        <p>还没有选菜哦～</p>
+        <p style="font-size:13px;margin-top:4px;">去菜单里给濛濛挑些好吃的吧 💕</p>
+      </div>`;
+    return;
+  }
+
+  let html = '';
+  entries.forEach(([key, qty]) => {
+    const [ci, ii] = key.split('_').map(Number);
+    const item = menu[ci].items[ii];
+    html += `
+      <div class="cart-item">
+        <div class="emoji" style="font-size:28px;width:38px;">${item.emoji}</div>
+        <div class="name">${item.name}</div>
+        <div class="qty-ctrl">
+          <button class="qty-btn" onclick="changeQty('${key}', -1)">−</button>
+          <span class="qty-num">${qty}</span>
+          <button class="qty-btn" onclick="changeQty('${key}', 1)">+</button>
+        </div>
+        <div class="subtotal">${(item.price * qty).toFixed(0)}</div>
+      </div>`;
+  });
+
+  html += `
+    <div class="cart-total">
+      <span>💝 心意总计</span>
+      <span class="amount">${getCartTotal().toFixed(0)}</span>
+    </div>
+    <button class="btn btn-primary" onclick="openOrderModal()">💌 为濛濛下单</button>
+    <button class="btn btn-outline" onclick="clearCart()">清空重选</button>`;
+
+  el.innerHTML = html;
+}
+
+function renderEdit() {
+  const el = document.getElementById('editPanel');
+  let html = '';
+  menu.forEach((cat, ci) => {
+    html += `<div class="category"><div class="cat-title">📂 ${cat.cat.slice(3)}</div>`;
+    cat.items.forEach((item, ii) => {
+      html += `
+        <div class="edit-item">
+          <div class="row">
+            <input value="${escHtml(item.emoji)}" placeholder="Emoji" style="max-width:60px;text-align:center;font-size:20px" onchange="updateItem(${ci},${ii},'emoji',this.value)">
+            <input value="${escHtml(item.name)}" placeholder="菜名" onchange="updateItem(${ci},${ii},'name',this.value)">
+          </div>
+          <div class="row">
+            <input value="${escHtml(item.desc)}" placeholder="描述" onchange="updateItem(${ci},${ii},'desc',this.value)">
+            <input value="${item.price}" placeholder="价格" type="number" style="max-width:80px" onchange="updateItem(${ci},${ii},'price',Number(this.value))">
+            <button class="del-btn" onclick="deleteItem(${ci},${ii})">🗑 删除</button>
+          </div>
+        </div>`;
+    });
+    html += `
+      <button class="btn-add" onclick="addItem(${ci})">+ 添加菜品到「${cat.cat.slice(3)}」</button>
+      <button class="btn-add" style="margin-top:4px;border-color:#e74c3c;color:#e74c3c;" onclick="deleteCategory(${ci})">✕ 删除此分类</button>
+      </div>`;
+  });
+  html += `
+    <button class="btn-add" onclick="addCategory()" style="border-color:var(--accent);color:var(--accent);">+ 添加新分类</button>
+    <div class="edit-actions">
+      <button class="btn btn-primary" onclick="resetMenu()">🔄 恢复默认菜单</button>
+    </div>`;
+  el.innerHTML = html;
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function refreshAll() {
+  renderMenu();
+  renderCart();
+  renderEdit();
+  updateBadges();
+}
+
+function updateBadges() {
+  const n = getCartCount();
+  document.getElementById('cartBadge').textContent = n;
+  document.getElementById('fabCount').textContent = n;
+}
+
+// ═══════════════════════════════════════
+//  ACTIONS
+// ═══════════════════════════════════════
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach((t,i) => {
+    t.classList.toggle('active', ['menu','cart','edit'][i] === tab);
+  });
+  document.getElementById('menuPanel').style.display = tab === 'menu' ? 'block' : 'none';
+  document.getElementById('cartPanel').classList.toggle('show', tab === 'cart');
+  document.getElementById('editPanel').classList.toggle('show', tab === 'edit');
+  if (tab === 'cart') renderCart();
+  if (tab === 'edit') renderEdit();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function addToCart(key) {
+  cart[key] = (cart[key] || 0) + 1;
+  save();
+  refreshAll();
+  toast('已添加 ✨');
+}
+
+function changeQty(key, delta) {
+  cart[key] = (cart[key] || 0) + delta;
+  if (cart[key] <= 0) delete cart[key];
+  save();
+  refreshAll();
+}
+
+function clearCart() {
+  if (confirm('确定清空已选的菜品吗？')) {
+    cart = {};
+    save();
+    refreshAll();
+    toast('已清空 🧹');
+  }
+}
+
+// ── Edit ──
+function updateItem(ci, ii, field, value) {
+  menu[ci].items[ii][field] = value;
+  save();
+  refreshAll();
+}
+
+function deleteItem(ci, ii) {
+  const name = menu[ci].items[ii].name;
+  if (confirm(`确定删除「${name}」吗？`)) {
+    const key = itemKey(ci, ii);
+    menu[ci].items.splice(ii, 1);
+    // Remove from cart
+    delete cart[key];
+    // Reindex cart keys after this index
+    const newCart = {};
+    for (const [k, v] of Object.entries(cart)) {
+      const [cci, cii] = k.split('_').map(Number);
+      if (cci === ci && cii > ii) {
+        newCart[itemKey(ci, cii - 1)] = v;
+      } else if (cci === ci && cii === ii) {
+        // skip
+      } else {
+        newCart[k] = v;
+      }
+    }
+    cart = newCart;
+    save();
+    refreshAll();
+    toast(`已删除「${name}」`);
+  }
+}
+
+function addItem(ci) {
+  menu[ci].items.push({ emoji:'🍽️', name:'新菜品', desc:'点击编辑描述', price:0 });
+  save();
+  refreshAll();
+}
+
+function deleteCategory(ci) {
+  const name = menu[ci].cat.slice(3);
+  if (confirm(`确定删除「${name}」分类及其所有菜品吗？`)) {
+    // Remove all cart items for this category
+    const newCart = {};
+    for (const [k, v] of Object.entries(cart)) {
+      const [cci] = k.split('_').map(Number);
+      if (cci < ci) newCart[k] = v;
+      else if (cci > ci) {
+        const [, cii] = k.split('_').map(Number);
+        newCart[itemKey(cci - 1, cii)] = v;
+      }
+    }
+    cart = newCart;
+    menu.splice(ci, 1);
+    save();
+    refreshAll();
+    toast(`已删除「${name}」`);
+  }
+}
+
+function addCategory() {
+  const name = prompt('请输入新分类名称：');
+  if (name && name.trim()) {
+    menu.push({ cat:'📌 ' + name.trim(), items:[] });
+    save();
+    refreshAll();
+  }
+}
+
+function resetMenu() {
+  if (confirm('确定恢复为默认菜单吗？你的修改将丢失。')) {
+    menu = JSON.parse(JSON.stringify(DEFAULT_MENU));
+    cart = {};
+    save();
+    refreshAll();
+    toast('已恢复默认菜单 🎉');
+    switchTab('menu');
+  }
+}
+
+// ── Order ──
+function openOrderModal() {
+  const entries = Object.entries(cart).filter(([,qty]) => qty > 0);
+  if (entries.length === 0) {
+    toast('请先选择菜品～');
+    return;
+  }
+  let html = '';
+  entries.forEach(([key, qty]) => {
+    const [ci, ii] = key.split('_').map(Number);
+    const item = menu[ci].items[ii];
+    html += `<div class="line"><span>${item.emoji} ${item.name} ×${qty}</span><span>¥${(item.price*qty).toFixed(0)}</span></div>`;
+  });
+  html += `<div class="line total"><span>💝 心意总计</span><span>¥${getCartTotal().toFixed(0)}</span></div>`;
+  document.getElementById('orderSummary').innerHTML = html;
+  document.getElementById('orderModal').style.display = 'flex';
+}
+
+function closeOrderModal() {
+  document.getElementById('orderModal').style.display = 'none';
+}
+
+function submitOrder() {
+  const note = document.getElementById('orderNote').value.trim();
+  const entries = Object.entries(cart).filter(([,qty]) => qty > 0);
+  const items = entries.map(([key, qty]) => {
+    const [ci, ii] = key.split('_').map(Number);
+    return `${menu[ci].items[ii].emoji} ${menu[ci].items[ii].name} ×${qty}`;
+  });
+
+  let msg = `💝 **濛濛，有人为你点了一份心意！**\n\n`;
+  msg += items.join('\n');
+  msg += `\n\n💰 总计：¥${getCartTotal().toFixed(0)}`;
+  if (note) msg += `\n💌 留言：${note}`;
+  msg += `\n\n✨ 每一口都是爱～`;
+
+  // Copy to clipboard as a fallback + show
+  navigator.clipboard.writeText(msg).catch(()=>{});
+
+  closeOrderModal();
+  document.getElementById('orderNote').value = '';
+  cart = {};
+  save();
+  refreshAll();
+  switchTab('menu');
+
+  alert('💝 心意已送达！\n\n订单内容已复制到剪贴板，可以粘贴发给濛濛哦～\n\n' + msg.replace(/\*/g,''));
+}
+
+// ── Toast ──
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(el._t);
+  el._t = setTimeout(() => el.classList.remove('show'), 1800);
+}
+
+// ═══════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════
+refreshAll();
+document.getElementById('menuPanel').style.display = 'block';
+</script>
+
+</body>
+</html>
