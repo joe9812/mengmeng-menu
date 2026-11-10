@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>mengmeng专属小灶</title>
+<title>濛濛专属小灶</title>
 <style>
   :root {
     --gold: #d4a84b;
@@ -612,10 +612,10 @@
       </div>
     </div>
     <div class="banner-info">
-      <div class="banner-avatar">🍚</div>
+      <div class="banner-avatar">💕</div>
       <div class="banner-text">
-        <h1>今朝专属小灶</h1>
-        <div class="sub">好好吃饭</div>
+        <h1>濛濛专属小灶</h1>
+        <div class="sub">濛濛，今天想吃什么？</div>
       </div>
     </div>
   </div>
@@ -969,7 +969,7 @@ function submitOrder() {
   // 生成订单文案
   const items = Object.entries(cart).filter(([,qty]) => qty > 0)
     .map(([name, qty]) => `${name} ×${qty}`);
-  const msg = `💝 mengmeng专属小灶\n📅 ${currentDate}\n\n${items.join('\n')}\n\n共 ${total} 份，请查收～`;
+  const msg = `💝 濛濛专属小灶\n📅 ${currentDate}\n\n${items.join('\n')}\n\n共 ${total} 份，请查收～`;
 
   // 复制到剪贴板
   navigator.clipboard.writeText(msg).catch(()=>{});
